@@ -1,2 +1,3 @@
-# metrognome
-Metronome PWA (to-be)
+# Metrognome
+
+Tiny, simple, fast, touch-friendly metronome.
