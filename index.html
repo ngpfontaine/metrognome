@@ -13,8 +13,21 @@
 
   <main>
 
-    <div id='bpm-readout' class='bpm-readout'>60</div>
-    <div class='bpm-label'>bpm</div>
+    <!-- <div id='bpm-readout' class='bpm-readout'>60</div>
+    <div class='bpm-label'>bpm</div> -->
+
+    <input id='i-bpm' name='i-bpm' class='i-bpm' type='range' min='20' max='200' value='60' step='5'>
+
+    <div class='container-blink'>
+      <div id='blink-01' class='btn-start-stop blink'>
+      </div>
+      <div class='blink-inner'>
+        <div class='blink-inner-readout'>
+          <div id='bpm-readout' class='bpm-readout'>60</div>
+          <div class='bpm-label'>bpm</div>
+        </div>
+      </div>
+    </div>
 
     <ul class='container-meter-btns'>
       <li class='meter-btn' data-meter-0='2'>
@@ -47,12 +60,9 @@
       </li>
     </ul>
 
-    <input id='i-bpm' name='i-bpm' class='i-bpm' type='range' min='20' max='200' value='60' step='10'>
-
-    <div id='blink-01' class='btn-start-stop blink'></div>
-
     <div class='container-beat-meter' id='container-beat-meter'>
     </div>
+
 
   </main>
 

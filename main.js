@@ -108,17 +108,20 @@ function startAnimating() {
 function animate() {
 
   let blinkFlashName = ''
+  let beatAudioName = ''
   
   // greater than max, reset to 0
   if (beat.meterInc > beat.meter[0]-1) {
     beat.meterInc = 0
     // use first colour & sound
     blinkFlashName = 'flash-01'
+    beatAudioName = 'aClick01'
   }
   // after first beat
   else {
     // use regular colour & sound
     blinkFlashName = 'flash'
+    beatAudioName = 'aClick02'
   }
 
   // beat meter blocks
@@ -131,7 +134,7 @@ function animate() {
   // beat audio & flash
   setTimeout(function() {
     gui.blink01.classList.add(blinkFlashName)
-    gui.aClick02.play()
+    gui[beatAudioName].play()
 
     // hide
     setTimeout(function() {
