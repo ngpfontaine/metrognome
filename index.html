@@ -1,0 +1,68 @@
+<html>
+<head>
+  <title>Metrognome</title>
+  <link rel="stylesheet" href="./main.css" />
+  <meta charset="utf-8">
+  <meta name='theme-color' content='#333'>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <!-- <meta rel='canonical' href='https://nicfontaine.com'> -->
+  <!-- <link rel="manifest" href="./manifest.json"> -->
+
+</head>
+<body>
+
+  <main>
+
+    <div id='bpm-readout' class='bpm-readout'>60</div>
+    <div class='bpm-label'>bpm</div>
+
+    <ul class='container-meter-btns'>
+      <li class='meter-btn' data-meter-0='2'>
+        <span class='mb-t'>2</span>
+        <span class='mb-b'>4</span>
+      </li>
+      <li class='meter-btn' data-meter-0='3'>
+        <span class='mb-t'>3</span>
+        <span class='mb-b'>4</span>
+      </li>
+      <li class='meter-btn sel' data-meter-0='4'>
+        <span class='mb-t'>4</span>
+        <span class='mb-b'>4</span>
+      </li>
+      <li class='meter-btn' data-meter-0='5'>
+        <span class='mb-t'>5</span>
+        <span class='mb-b'>4</span>
+      </li>
+      <li class='meter-btn' data-meter-0='6'>
+        <span class='mb-t'>6</span>
+        <span class='mb-b'>8</span>
+      </li>
+      <li class='meter-btn' data-meter-0='7'>
+        <span class='mb-t'>7</span>
+        <span class='mb-b'>8</span>
+      </li>
+      <li class='meter-btn' data-meter-0='9'>
+        <span class='mb-t'>9</span>
+        <span class='mb-b'>8</span>
+      </li>
+    </ul>
+
+    <input id='i-bpm' name='i-bpm' class='i-bpm' type='range' min='20' max='200' value='60' step='10'>
+    <div id='blink-01' class='btn-start-stop blink'></div>
+
+    <div class='container-beat-meter' id='container-beat-meter'>
+    </div>
+
+  </main>
+
+  <!-- audio -->
+  <audio id='a-click-01'>
+    <source src='./audio/clack-hi.wav' type='audio/wav' />
+  </audio>
+  <audio id='a-click-02'>
+    <source src='./audio/clack-lo.wav' type='audio/wav' />
+  </audio>
+
+</body>
+<script src='./main.js'></script>
+</html>
