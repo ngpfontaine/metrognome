@@ -5,6 +5,8 @@ const gui = {
   bpmReadout: document.getElementById('bpm-readout'),
   btnSS: document.getElementById('btn-start-stop'),
   demo: document.getElementById('demo'),
+  // aClick01: new Audio('./audio/clack-hi.mp3'),
+  // aClick02: new Audio('./audio/clack-lo.mp3'),
   aClick01: document.getElementById('a-click-01'),
   aClick02: document.getElementById('a-click-02'),
   meterBlock: document.getElementsByClassName('meter-block')[0],
@@ -16,12 +18,15 @@ const gui = {
 var beat = {
   running: false,
   bpmAnimation: undefined,
+  offset: 70,
   meter: [4,4],
   meterInc: 0,
   meterFrag: document.createDocumentFragment()
 }
 
 const touchEvent = 'ontouchstart' in window ? 'touchstart' : 'click'
+// gui.aClick01.load()
+// gui.aClick02.load()
 
 // set at 60 for refreshes
 gui.iBpm.value = 60
@@ -65,63 +70,74 @@ gui.iBpm.addEventListener('change', function() {
 
 // bpm start
 function startAnimating() {
-
-  // beat once immediately
+  
   beat.meterInc = 0
-  gui.blink01.classList.add('flash-01')
-  gui.aClick01.play()
-  setTimeout(function() {
-    gui.blink01.classList.remove('flash-01')
-  },100)
 
-  // inc through meter blocks
+  // explicitly set & kill audio
+  // gui.aClick01.load()
+  // gui.aClick02.load()
+  gui.aClick01.play()
+  gui.aClick01.pause()
+
+  // beat first meter block
   gui.meterBlocks[beat.meterInc].classList.add('flash')
   let beatHolder = beat.meterInc
   setTimeout(function() {
     gui.meterBlocks[beatHolder].classList.remove('flash')
   },100)
 
-  beat.meterInc++
+  setTimeout(function() {
+    // beat once immediately
+    gui.blink01.classList.add('flash-01')
+    gui.aClick01.play()
+    setTimeout(function() {
+      gui.blink01.classList.remove('flash-01')
+    },100)
 
-  // get bpm & setInterval
-  let bpm = 1000 / (gui.iBpm.value / 60)
-  beat.bpmAnimation = setInterval(animate, bpm)  
+    // get bpm & setInterval
+    let bpm = 1000 / (gui.iBpm.value / 60)
+    beat.bpmAnimation = setInterval(animate, bpm)  
+
+  },beat.offset)
+
+  beat.meterInc++
 
 }
 
 // bpm animation
 function animate() {
+
+  let blinkFlashName = ''
   
   // greater than max, reset to 0
   if (beat.meterInc > beat.meter[0]-1) {
     beat.meterInc = 0
-    gui.blink01.classList.add('flash-01')
-    gui.aClick01.play()
-
-    // hide
-    setTimeout(function() {
-      gui.blink01.classList.remove('flash-01')
-    },100)    
-
+    // use first colour & sound
+    blinkFlashName = 'flash-01'
   }
   // after first beat
   else {
-    gui.blink01.classList.add('flash')
-    gui.aClick02.play()
-
-    // hide
-    setTimeout(function() {
-      gui.blink01.classList.remove('flash')
-    },100)
-
+    // use regular colour & sound
+    blinkFlashName = 'flash'
   }
 
-  // inc through meter blocks
+  // beat meter blocks
   gui.meterBlocks[beat.meterInc].classList.add('flash')
   let beatHolder = beat.meterInc
   setTimeout(function() {
     gui.meterBlocks[beatHolder].classList.remove('flash')
-  },100)
+  },150)
+
+  // beat audio & flash
+  setTimeout(function() {
+    gui.blink01.classList.add(blinkFlashName)
+    gui.aClick02.play()
+
+    // hide
+    setTimeout(function() {
+      gui.blink01.classList.remove(blinkFlashName)
+    },100)
+  },beat.offset)
 
   // count time
   beat.meterInc++
