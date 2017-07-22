@@ -93,7 +93,8 @@ input[type=range]::-moz-focus-outer {
   height: 160px;
   margin: 0 auto;
   border-radius: 50%;
-  background: #585c63;
+  background: #5d6169;
+  box-shadow: 0 0 7px rgba(70,70,70,0.3);
 }
 
 .blink-inner-readout {
