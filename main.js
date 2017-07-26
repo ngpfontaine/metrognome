@@ -18,6 +18,7 @@ const gui = {
 var beat = {
   running: false,
   bpmAnimation: undefined,
+  bpmCalc: 60,
   offset: 70,
   meter: [4,4],
   meterInc: 0,
@@ -25,8 +26,6 @@ var beat = {
 }
 
 const touchEvent = 'ontouchstart' in window ? 'touchstart' : 'click'
-// gui.aClick01.load()
-// gui.aClick02.load()
 
 // set at 60 for refreshes
 gui.iBpm.value = 60
@@ -35,11 +34,12 @@ gui.iBpm.value = 60
 gui.blink01.addEventListener(touchEvent, function() {
   // stop
   if (beat.running) {
-    clearInterval(beat.bpmAnimation)
+    clearTimeout(beat.bpmAnimation)
     beat.running = false
   // start
   } else {
     beat.running = true
+    gui.aClick01.play()
     startAnimating()  
   }
 })
@@ -49,24 +49,16 @@ gui.blink01.addEventListener(touchEvent, function() {
 gui.iBpm.addEventListener('input', function() {
   // display value
   gui.bpmReadout.innerHTML = this.value
+  beat.bpmCalc = this.value
 })
 
 // bpm slider
-// update value & play (if playing) on release
-gui.iBpm.addEventListener('change', function() {
-  // display value
-  gui.bpmReadout.innerHTML = this.value
-
-  // clear & start again
-  if (beat.running) {
-    clearInterval(beat.bpmAnimation)
-    startAnimating()
-  // clear
-  } else {
-    clearInterval(beat.bpmAnimation)
-  }
-
-})
+// update value, but don't affect playing
+// this only occurs on release (can use for play/pause)
+// gui.iBpm.addEventListener('change', function() {
+//   // display value
+//   gui.bpmReadout.innerHTML = this.value
+// })
 
 // bpm start
 function startAnimating() {
@@ -76,8 +68,6 @@ function startAnimating() {
   // explicitly set & kill audio
   // gui.aClick01.load()
   // gui.aClick02.load()
-  gui.aClick01.play()
-  gui.aClick01.pause()
 
   // beat first meter block
   gui.meterBlocks[beat.meterInc].classList.add('flash')
@@ -95,8 +85,8 @@ function startAnimating() {
     },100)
 
     // get bpm & setInterval
-    let bpm = 1000 / (gui.iBpm.value / 60)
-    beat.bpmAnimation = setInterval(animate, bpm)  
+    let bpm = 1000 / (beat.bpmCalc / 60)
+    beat.bpmAnimation = setTimeout(animate, bpm)  
 
   },beat.offset)
 
@@ -121,7 +111,8 @@ function animate() {
   else {
     // use regular colour & sound
     blinkFlashName = 'flash'
-    beatAudioName = 'aClick02'
+    // beatAudioName = 'aClick02'
+    beatAudioName = 'aClick01'
   }
 
   // beat meter blocks
@@ -144,6 +135,12 @@ function animate() {
 
   // count time
   beat.meterInc++
+
+  // repeat
+  if (beat.running) {
+    let bpm = 1000 / (beat.bpmCalc / 60)
+    beat.bpmAnimation = setTimeout(animate, bpm)
+  }
   
 }
 
