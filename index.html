@@ -5,29 +5,92 @@
   <meta charset="utf-8">
   <meta name='theme-color' content='#333'>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link href="https://fonts.googleapis.com/css?family=Quicksand:400,700" rel="stylesheet">  
+     <link href="https://fonts.googleapis.com/css?family=Bree+Serif" rel="stylesheet"> 
   <!-- <meta rel='canonical' href='https://nicfontaine.com'> -->
   <!-- <link rel="manifest" href="./manifest.json"> -->
 
 </head>
 <body>
 
+
   <main>
 
+    <div class='bg-01'></div>
     <!-- <div id='bpm-readout' class='bpm-readout'>60</div>
     <div class='bpm-label'>bpm</div> -->
 
-    <input id='i-bpm' name='i-bpm' class='i-bpm' type='range' min='20' max='200' value='60' step='5'>
+    <section class='row row-slider'>
 
-    <div class='container-blink'>
-      <div id='blink-01' class='btn-start-stop blink'>
-      </div>
-      <div class='blink-inner'>
-        <div class='blink-inner-readout'>
-          <div id='bpm-readout' class='bpm-readout'>60</div>
-          <div class='bpm-label'>bpm</div>
+      <!-- range slider -->
+      <input id='bpm-slider' name='bpm-slider' class='bpm-slider' type='range' min='20' max='200' value='60' step='5'>
+      <ul class='range-nos range-lines'>
+        <li>|</li>
+        <li>|</li>
+        <li>|</li>
+        <li>|</li>
+        <li>|</li>
+        <li>|</li>
+        <li>|</li>
+        <li>|</li>
+        <li>|</li>
+        <li>|</li>
+      </ul>
+      <ul id='range-nos' class='range-nos'>
+        <li>20</li>
+        <li>40</li>
+        <li>60</li>
+        <li>80</li>
+        <li>100</li>
+        <li>120</li>
+        <li>140</li>
+        <li>160</li>
+        <li>180</li>
+        <li>200</li>
+      </ul>
+
+    </section>
+
+    <section class='row row-bpm'>
+    <div class='row-bpm-inner'>
+
+      <div class='bar-flare bar-flare-01'></div>
+      <div class='bar-flare bar-flare-02'></div>
+      <div class='bar-flare bar-flare-03'></div>
+      <div class='bar-flare bar-flare-04'></div>
+      <div class='bar-flare bar-flare-05'></div>
+
+        <!-- play/pause btn -->
+        <div class='container-blink'>
+          <div id='blink-01' class='btn-play-pause blink'>
+          <!-- <div class='btn-play-pause-pattern'></div> -->
+            <div class='blink-inner'>
+              <img class='play-pause-icons icon-pause' id='icon-pause' src='./img/icon-pause.png'>
+              <img class='play-pause-icons icon-play' id='icon-play' src='./img/icon-triangle.png'>
+            </div>
+          </div>
         </div>
+
+        <!-- tap -->
+        <div class='container-tap-bpm'>
+
+          <div class='bpm-readout'>
+            <div id='bpm-play-pause' class='bpm-play-pause'>60</div>
+            <div class='bpm-label'>bpm</div>
+          </div>
+
+          <div class='container-tap'>
+            <div id='btn-tap' class='btn-tap'>
+              <div class='tap-text'>TAP</div>
+            </div>
+          </div>
+
+        </div>
+
       </div>
-    </div>
+    </section>
+
+    <section class='row row-meter'>
 
     <ul class='container-meter-btns'>
       <li class='meter-btn' data-meter-0='2'>
@@ -70,9 +133,9 @@
   <audio id='a-click-01' preload='auto'>
     <source src='./audio/clack-hi.mp3' type='audio/mp3' />
   </audio>
-  <!-- <audio id='a-click-02' preload='auto'>
+  <audio id='a-click-02' preload='auto'>
     <source src='./audio/clack-lo.mp3' type='audio/mp3' />
-  </audio> -->
+  </audio>
 
 </body>
 <script src='./main.js'></script>

@@ -1,17 +1,21 @@
 // dom & audio
 const gui = {
   blink01: document.getElementById('blink-01'),
-  iBpm: document.getElementById('i-bpm'),
-  bpmReadout: document.getElementById('bpm-readout'),
-  btnSS: document.getElementById('btn-start-stop'),
-  demo: document.getElementById('demo'),
+  bpmSlider: document.getElementById('bpm-slider'),
+  bpmPlayPause: document.getElementById('bpm-play-pause'),
   // aClick01: new Audio('./audio/clack-hi.mp3'),
   // aClick02: new Audio('./audio/clack-lo.mp3'),
   aClick01: document.getElementById('a-click-01'),
   aClick02: document.getElementById('a-click-02'),
   meterBlock: document.getElementsByClassName('meter-block')[0],
   beatMeter: document.getElementById('container-beat-meter'),
-  meterBtns: document.getElementsByClassName('meter-btn')
+  meterBtns: document.getElementsByClassName('meter-btn'),
+  rangeNos: document.getElementById('range-nos').getElementsByTagName('li'),
+  tapBtn: document.getElementById('btn-tap'),
+  icons: {
+    play: document.getElementById('icon-play'),
+    pause: document.getElementById('icon-pause')
+  }
 }
 
 // numbers & flags pertaining to rhythm & animation
@@ -19,55 +23,70 @@ var beat = {
   running: false,
   bpmAnimation: undefined,
   bpmCalc: 60,
-  offset: 70,
+  offset: 100,
   meter: [4,4],
   meterInc: 0,
-  meterFrag: document.createDocumentFragment()
+  meterFrag: document.createDocumentFragment(),
+  firstTapFlag: false,
+  tapTimeoutArray: [],
+  tapTimeoutInc: 0,
+  tapTimeout: null
 }
 
-const touchEvent = 'ontouchstart' in window ? 'touchstart' : 'click'
+const touchEvent = 'ontouchstart' in window ? 'touchstart' : 'mousedown'
 
 // set at 60 for refreshes
-gui.iBpm.value = 60
+gui.bpmSlider.value = 60
 
-// bpm btn toggle
+// play/pause - bpm btn toggle
 gui.blink01.addEventListener(touchEvent, function() {
-  // stop
-  if (beat.running) {
-    clearTimeout(beat.bpmAnimation)
-    beat.running = false
-  // start
-  } else {
-    beat.running = true
-    gui.aClick01.play()
-    startAnimating()  
+  playPause()
+})
+
+// play/pause - space key
+document.addEventListener('keydown', function(e) {
+  if (e.keyCode === 32) {
+    playPause()  
   }
 })
 
+// toggle for playing & pausing
+function playPause() {
+  // stop
+  if (beat.running) {
+    clearInterval(beat.bpmAnimation)
+    beat.running = false
+    gui.icons.play.style.display = 'block'
+    gui.icons.pause.style.display = 'none'
+  // start
+  } else {
+    beat.running = true
+    startAnimating()  
+    gui.icons.play.style.display = 'none'
+    gui.icons.pause.style.display = 'block'
+  }  
+}
+
 // bpm slider
 // update display value on move
-gui.iBpm.addEventListener('input', function() {
+gui.bpmSlider.addEventListener('input', function() {
   // display value
-  gui.bpmReadout.innerHTML = this.value
+  gui.bpmPlayPause.innerHTML = this.value
   beat.bpmCalc = this.value
 })
 
 // bpm slider
 // update value, but don't affect playing
 // this only occurs on release (can use for play/pause)
-// gui.iBpm.addEventListener('change', function() {
+// gui.bpmSlider.addEventListener('change', function() {
 //   // display value
-//   gui.bpmReadout.innerHTML = this.value
+//   gui.bpmPlayPause.innerHTML = this.value
 // })
 
 // bpm start
 function startAnimating() {
   
   beat.meterInc = 0
-
-  // explicitly set & kill audio
-  // gui.aClick01.load()
-  // gui.aClick02.load()
 
   // beat first meter block
   gui.meterBlocks[beat.meterInc].classList.add('flash')
@@ -86,15 +105,20 @@ function startAnimating() {
 
     // get bpm & setInterval
     let bpm = 1000 / (beat.bpmCalc / 60)
+    // make up for the offset
+    bpm = bpm - (100/beat.offset)
     beat.bpmAnimation = setTimeout(animate, bpm)  
 
-  },beat.offset)
+  },0)
 
   beat.meterInc++
 
 }
 
+//
 // bpm animation
+//
+
 function animate() {
 
   let blinkFlashName = ''
@@ -111,8 +135,8 @@ function animate() {
   else {
     // use regular colour & sound
     blinkFlashName = 'flash'
-    // beatAudioName = 'aClick02'
-    beatAudioName = 'aClick01'
+    beatAudioName = 'aClick02'
+    // beatAudioName = 'aClick01'
   }
 
   // beat meter blocks
@@ -142,6 +166,19 @@ function animate() {
     beat.bpmAnimation = setTimeout(animate, bpm)
   }
   
+}
+
+//
+// change bpm var value, btn display, and slider range value
+//
+
+function changeBpm(bpm) {
+  // play/pause btn display
+  gui.bpmPlayPause.innerHTML = bpm
+  // range slider
+  gui.bpmSlider.value = bpm
+  // var holder for bpm number
+  beat.bpmCalc = bpm
 }
 
 //
@@ -182,4 +219,62 @@ function clearMeterBtnSel() {
   for (var y=0; y<gui.meterBtns.length; y++) {
     gui.meterBtns[y].classList.remove('sel')
   }
+}
+
+//
+// change bpm via range numbers
+//
+
+Array.from(gui.rangeNos).forEach((noCl) => {
+  noCl.addEventListener(touchEvent, function() {
+    // grab val
+    let num = Number(this.innerHTML)
+    // assign
+    changeBpm(num)
+  })
+})
+
+//
+// tap bpm
+//
+
+gui.tapBtn.addEventListener(touchEvent, function() {
+
+  // don't add on first click. will be 0
+  if (beat.firstTapFlag) {
+    clearInterval(beat.tapTimeout)
+    beat.tapTimeoutArray.push(Math.round(6000/beat.tapTimeoutInc))
+    beat.tapTimeoutInc = 0
+    
+    // limit array length to keep bpm input fresh
+    if (beat.tapTimeoutArray.length > 5) {
+      beat.tapTimeoutArray = beat.tapTimeoutArray.slice(1)
+    }
+
+    // change bpm
+    changeBpm(getAvg())
+    
+  // enable pushing after first click
+  } else {
+    beat.firstTapFlag = true
+  }
+  
+  // counting interval for bpm
+  beat.tapTimeout = setInterval(function() {
+    beat.tapTimeoutInc++
+
+    if (beat.tapTimeoutInc > 600) {
+      clearInterval(beat.tapTimeout)
+    }
+  },10)
+  
+})
+
+// average array indices
+function getAvg() {
+  var sum = 0
+  for (var i=0; i<beat.tapTimeoutArray.length; i++) {
+    sum+= beat.tapTimeoutArray[i]
+  }
+  return Math.round(sum/beat.tapTimeoutArray.length)
 }
