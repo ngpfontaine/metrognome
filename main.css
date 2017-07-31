@@ -245,7 +245,7 @@ input[type=range]::-moz-focus-outer {
   cursor: pointer;
   -webkit-appearance: none;
   -webkit-tap-highlight-color: rgba(0,0,0,0);
-  box-shadow: 0 1px 13px rgba(0,0,0,0.35);
+  box-shadow: 4px 4px 18px rgba(0,0,0,0.35);
   border-bottom: 1px solid #535353;
   border-top: 1px solid #6c6c6c;
   overflow: hidden;
@@ -303,7 +303,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#575b62', end
   margin: 0 auto;
   border-radius: 50%;
   background: #5d6169;
-  box-shadow: 0 0 7px rgba(70,70,70,0.3);
+  box-shadow: inset 0 0 29px rgba(255,255,255,0.03);
+  overflow: hidden;
+  border-top: 2px solid #505050;
+  border-bottom: 2px solid #777;
+  box-sizing: border-box;
 
   /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#5d6169+0,707175+100 */
 background: #5d6169; /* Old browsers */
@@ -332,6 +336,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#5d6169', end
   opacity: 0.3;
 }
 
+.btn-metal {
+  position: absolute;
+  top: 0; bottom: 0; left: 0; right: 0;
+  background: url('./img/metal-01.jpg');
+  opacity: 0.06;
+  background-size: cover;
+  transform: rotate(125deg);
+}
+
 /*meter btns*/
 
 .container-meter-btns {
@@ -358,7 +371,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#5d6169', end
 .container-meter-btns li.sel {
   background: #586b72;
   color: #fff;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.8);
+  box-shadow: 0 1px 4px rgba(3,14,28,0.7);
   transform: scale(1.2,1.2);
 }
 
@@ -453,7 +466,7 @@ input[type=range]::-webkit-slider-runnable-track {
   border: 0px solid #010101;
 }
 input[type=range]::-webkit-slider-thumb {
-  box-shadow: 2.7px 2.7px 4.7px rgba(0, 0, 0, 0.19), 0px 0px 2.7px rgba(13, 13, 13, 0.19);
+  box-shadow: 2.7px 2.7px 4.7px rgba(3,14,28,0.4), 0px 0px 2.7px rgba(3,14,28,0.4);
   border: 0px solid #000000;
   height: 36px;
   width: 36px;
@@ -476,7 +489,7 @@ input[type=range]::-moz-range-track {
   border: 0px solid #010101;
 }
 input[type=range]::-moz-range-thumb {
-  box-shadow: 2.7px 2.7px 4.7px rgba(0, 0, 0, 0.19), 0px 0px 2.7px rgba(13, 13, 13, 0.19);
+  box-shadow: 2.7px 2.7px 4.7px rgba(3,14,28,0.4), 0px 0px 2.7px rgba(3,14,28,0.4);
   border: 0px solid #000000;
   height: 36px;
   width: 36px;
@@ -505,7 +518,7 @@ input[type=range]::-ms-fill-upper {
   box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0px 0px 0px rgba(13, 13, 13, 0);
 }
 input[type=range]::-ms-thumb {
-  box-shadow: 2.7px 2.7px 4.7px rgba(0, 0, 0, 0.19), 0px 0px 2.7px rgba(13, 13, 13, 0.19);
+  box-shadow: 2.7px 2.7px 4.7px rgba(3,14,28,0.4), 0px 0px 2.7px rgba(3,14,28,0.4);
   border: 0px solid #000000;
   height: 36px;
   width: 36px;
@@ -541,7 +554,7 @@ input[type=range]::-webkit-slider-runnable-track {
   border: 0px solid #010101;
 }
 input[type=range]::-webkit-slider-thumb {
-  box-shadow: 2.7px 2.7px 4.7px rgba(0, 0, 0, 0.19), 0px 0px 2.7px rgba(13, 13, 13, 0.19);
+  box-shadow: 2.7px 2.7px 4.7px rgba(3,14,28,0.4), 0px 0px 2.7px rgba(3,14,28,0.4);
   border: 0px solid #000000;
   height: 36px;
   width: 36px;
@@ -564,7 +577,7 @@ input[type=range]::-moz-range-track {
   border: 0px solid #010101;
 }
 input[type=range]::-moz-range-thumb {
-  box-shadow: 2.7px 2.7px 4.7px rgba(0, 0, 0, 0.19), 0px 0px 2.7px rgba(13, 13, 13, 0.19);
+  box-shadow: 2.7px 2.7px 4.7px rgba(3,14,28,0.4), 0px 0px 2.7px rgba(3,14,28,0.4);
   border: 0px solid #000000;
   height: 36px;
   width: 36px;
@@ -593,7 +606,7 @@ input[type=range]::-ms-fill-upper {
   box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0px 0px 0px rgba(13, 13, 13, 0);
 }
 input[type=range]::-ms-thumb {
-  box-shadow: 2.7px 2.7px 4.7px rgba(0, 0, 0, 0.19), 0px 0px 2.7px rgba(13, 13, 13, 0.19);
+  box-shadow: 2.7px 2.7px 4.7px rgba(3,14,28,0.4), 0px 0px 2.7px rgba(3,14,28,0.4);
   border: 0px solid #000000;
   height: 36px;
   width: 36px;

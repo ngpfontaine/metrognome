@@ -146,7 +146,9 @@ function runBeat() {
   let beatAudioName = ''
   
   // greater than max, reset to 0
-  if (beat.meterInc > beat.meter[0]-1) {
+  // if (beat.meterInc > beat.meter[0]-1) {
+  // (note) runMeter() has already scaled this to 0 above
+  if (beat.meterInc === 0) {
     console.log('beat.meterInc greater than max, reset')
     beat.meterInc = 0
     // use first colour & sound
