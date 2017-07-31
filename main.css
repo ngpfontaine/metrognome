@@ -70,6 +70,7 @@ input[type=range]::-moz-focus-outer {
 
 .row-bpm {
   padding: 25px 15px;
+  box-shadow: 0 2px 4px rgba(3,14,28,0.4);
 }
 
 .row-bpm-inner {
@@ -89,6 +90,7 @@ input[type=range]::-moz-focus-outer {
   position: absolute;
   margin: 0 auto;
   opacity: 0.06;
+  pointer-events: none;
 }
 
 .bar-flare-01 {

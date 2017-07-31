@@ -18,12 +18,13 @@ const gui = {
   }
 }
 
-// numbers & flags pertaining to rhythm & animation
+// numbers & flags pertaining to rhythm & timeout
 var beat = {
   running: false,
-  bpmAnimation: undefined,
+  bpmTimeout: undefined,
+  meterTimeout: undefined,
   bpmCalc: 60,
-  offset: 100,
+  offset: 120,
   meter: [4,4],
   meterInc: 0,
   meterFrag: document.createDocumentFragment(),
@@ -54,7 +55,8 @@ document.addEventListener('keydown', function(e) {
 function playPause() {
   // stop
   if (beat.running) {
-    clearInterval(beat.bpmAnimation)
+    clearInterval(beat.bpmTimeout)
+    clearInterval(beat.meterTimeout)
     beat.running = false
     gui.icons.play.style.display = 'block'
     gui.icons.pause.style.display = 'none'
@@ -87,45 +89,65 @@ gui.bpmSlider.addEventListener('input', function() {
 function startAnimating() {
   
   beat.meterInc = 0
+  let beatHolder = beat.meterInc
 
   // beat first meter block
-  gui.meterBlocks[beat.meterInc].classList.add('flash')
-  let beatHolder = beat.meterInc
+  gui.meterBlocks[beatHolder].classList.add('flash')
   setTimeout(function() {
     gui.meterBlocks[beatHolder].classList.remove('flash')
   },100)
 
+  // beat once immediately
+  gui.blink01.classList.add('flash-01')
+  gui.aClick01.play()
   setTimeout(function() {
-    // beat once immediately
-    gui.blink01.classList.add('flash-01')
-    gui.aClick01.play()
-    setTimeout(function() {
-      gui.blink01.classList.remove('flash-01')
-    },100)
+    gui.blink01.classList.remove('flash-01')
+  },100)
 
-    // get bpm & setInterval
-    let bpm = 1000 / (beat.bpmCalc / 60)
-    // make up for the offset
-    bpm = bpm - (100/beat.offset)
-    beat.bpmAnimation = setTimeout(animate, bpm)  
+  // get bpm & setInterval
+  let bpm = 1000 / (beat.bpmCalc / 60)
 
-  },0)
+  // start meter & beat Timeouts
+  beat.meterTimeout = setTimeout(runMeter, bpm-beat.offset)
+  beat.bpmTimeout = setTimeout(runBeat, bpm)
 
   beat.meterInc++
 
 }
 
 //
-// bpm animation
+// meter timeout loop. plays offset before beat timeout
 //
 
-function animate() {
+function runMeter() {
+
+  if (beat.meterInc > beat.meter[0]-1) {
+    beat.meterInc = 0
+  }
+
+  let beatHolder = beat.meterInc
+  let bpm = 1000 / (beat.bpmCalc / 60)
+  
+  // beat meter blocks
+  gui.meterBlocks[beatHolder].classList.add('flash')
+  setTimeout(function() {
+    gui.meterBlocks[beatHolder].classList.remove('flash')
+  },150)
+
+}
+
+//
+// bpm timeout
+//
+
+function runBeat() {
 
   let blinkFlashName = ''
   let beatAudioName = ''
   
   // greater than max, reset to 0
   if (beat.meterInc > beat.meter[0]-1) {
+    console.log('beat.meterInc greater than max, reset')
     beat.meterInc = 0
     // use first colour & sound
     blinkFlashName = 'flash-01'
@@ -136,36 +158,29 @@ function animate() {
     // use regular colour & sound
     blinkFlashName = 'flash'
     beatAudioName = 'aClick02'
-    // beatAudioName = 'aClick01'
   }
 
-  // beat meter blocks
-  gui.meterBlocks[beat.meterInc].classList.add('flash')
   let beatHolder = beat.meterInc
-  setTimeout(function() {
-    gui.meterBlocks[beatHolder].classList.remove('flash')
-  },150)
 
   // beat audio & flash
+  gui.blink01.classList.add(blinkFlashName)
+  gui[beatAudioName].play()
+  // hide
   setTimeout(function() {
-    gui.blink01.classList.add(blinkFlashName)
-    gui[beatAudioName].play()
-
-    // hide
-    setTimeout(function() {
-      gui.blink01.classList.remove(blinkFlashName)
-    },100)
-  },beat.offset)
-
-  // count time
-  beat.meterInc++
+    gui.blink01.classList.remove(blinkFlashName)
+  },100)
 
   // repeat
   if (beat.running) {
+    // loop runBeat()
     let bpm = 1000 / (beat.bpmCalc / 60)
-    beat.bpmAnimation = setTimeout(animate, bpm)
+    beat.bpmTimeout = setTimeout(runBeat, bpm)
+    beat.meterTimeout = setTimeout(runMeter, bpm-beat.offset)
   }
   
+  // count time
+  beat.meterInc++
+
 }
 
 //
@@ -263,8 +278,10 @@ gui.tapBtn.addEventListener(touchEvent, function() {
   beat.tapTimeout = setInterval(function() {
     beat.tapTimeoutInc++
 
-    if (beat.tapTimeoutInc > 600) {
+    // clear values & timeout if delay runs longer than lowest bpm
+    if (beat.tapTimeoutInc > 500) {
       clearInterval(beat.tapTimeout)
+      beat.tapTimeoutArray = []
     }
   },10)
   
