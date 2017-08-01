@@ -47,7 +47,7 @@ gui.blink01.addEventListener(touchEvent, function() {
 // play/pause - space key
 document.addEventListener('keydown', function(e) {
   if (e.keyCode === 32) {
-    playPause()  
+    playPause()
   }
 })
 
@@ -149,7 +149,6 @@ function runBeat() {
   // if (beat.meterInc > beat.meter[0]-1) {
   // (note) runMeter() has already scaled this to 0 above
   if (beat.meterInc === 0) {
-    console.log('beat.meterInc greater than max, reset')
     beat.meterInc = 0
     // use first colour & sound
     blinkFlashName = 'flash-01'
