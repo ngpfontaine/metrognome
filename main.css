@@ -282,6 +282,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#575b62', end
   transition: background 0.08s;
 }
 
+/*(note) add coloured shadows to this effect*/
 .blink.flash-01 {
   background: #F073AB;
   transform: scale(1.03,1.03);

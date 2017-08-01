@@ -36,6 +36,8 @@ var beat = {
 
 const touchEvent = 'ontouchstart' in window ? 'touchstart' : 'mousedown'
 
+const tock = new Tock()
+
 // set at 60 for refreshes
 gui.bpmSlider.value = 60
 
