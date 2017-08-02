@@ -31,12 +31,14 @@ var beat = {
   firstTapFlag: false,
   tapTimeoutArray: [],
   tapTimeoutInc: 0,
-  tapTimeout: null
+  tapTimeout: null,
+  adjStart: undefined,
+  adjDiff: undefined
 }
 
 const touchEvent = 'ontouchstart' in window ? 'touchstart' : 'mousedown'
 
-const tock = new Tock()
+// const tock = new Tock()
 
 // set at 60 for refreshes
 gui.bpmSlider.value = 60
@@ -89,6 +91,8 @@ gui.bpmSlider.addEventListener('input', function() {
 
 // bpm start
 function startAnimating() {
+
+  beat.adjStart = Date.now()
   
   beat.meterInc = 0
   let beatHolder = beat.meterInc
@@ -144,10 +148,17 @@ function runMeter() {
 
 function runBeat() {
 
+  // adjust compensate for inconsistent setTimeout timing
+  let bpm = 1000 / (beat.bpmCalc / 60)
+  beat.adjDiff = Date.now()
+  let adjFix = beat.adjDiff - beat.adjStart - bpm
+  // zero start value for loop
+  beat.adjStart = beat.adjDiff
+
   let blinkFlashName = ''
   let beatAudioName = ''
   
-  // greater than max, reset to 0
+  // greater than max, stop to 0
   // if (beat.meterInc > beat.meter[0]-1) {
   // (note) runMeter() has already scaled this to 0 above
   if (beat.meterInc === 0) {
@@ -173,12 +184,13 @@ function runBeat() {
     gui.blink01.classList.remove(blinkFlashName)
   },100)
 
-  // repeat
+  var time = 0
+  var elapsed = '0.0'
+
+  // loop runBeat()
   if (beat.running) {
-    // loop runBeat()
-    let bpm = 1000 / (beat.bpmCalc / 60)
-    beat.bpmTimeout = setTimeout(runBeat, bpm)
-    beat.meterTimeout = setTimeout(runMeter, bpm-beat.offset)
+    beat.bpmTimeout = setTimeout(runBeat, bpm-adjFix)
+    beat.meterTimeout = setTimeout(runMeter, bpm-beat.offset-adjFix)
   }
   
   // count time
