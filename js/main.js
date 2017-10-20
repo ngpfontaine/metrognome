@@ -33,7 +33,8 @@ var beat = {
   tapTimeoutInc: 0,
   tapTimeout: null,
   adjStart: undefined,
-  adjDiff: undefined
+  adjDiff: undefined,
+  adjFlag: false
 }
 
 const touchEvent = 'ontouchstart' in window ? 'touchstart' : 'mousedown'
@@ -77,8 +78,11 @@ function playPause() {
 // update display value on move
 gui.bpmSlider.addEventListener('input', function() {
   // display value
-  gui.bpmPlayPause.innerHTML = this.value
-  beat.bpmCalc = this.value
+  let val = this.value
+  changeBpm(val)
+  // gui.bpmPlayPause.innerHTML = val
+  // beat.bpmCalc = val
+  beat.adjFlag = true
 })
 
 // bpm slider
@@ -148,19 +152,25 @@ function runMeter() {
 
 function runBeat() {
 
+  // (note) this gets messed up when beat is changed via slider while running
+  // (note) maybe a flag to skip this part once after adjust?
+
   // adjust compensate for inconsistent setTimeout timing
+  let adjFix = 0
   let bpm = 1000 / (beat.bpmCalc / 60)
   beat.adjDiff = Date.now()
-  let adjFix = beat.adjDiff - beat.adjStart - bpm
-  // zero start value for loop
+
+  // create adjustment value, or reset adjustment flag for next round
+  !beat.adjFlag ? adjFix = beat.adjDiff-beat.adjStart-bpm : beat.adjFlag = false
+
+  // zero start date value for loop
   beat.adjStart = beat.adjDiff
 
-  let blinkFlashName = ''
-  let beatAudioName = ''
+  let blinkFlashName = '',
+    beatAudioName = ''
   
   // greater than max, stop to 0
-  // if (beat.meterInc > beat.meter[0]-1) {
-  // (note) runMeter() has already scaled this to 0 above
+  // runMeter() has already scaled this to 0 above
   if (beat.meterInc === 0) {
     beat.meterInc = 0
     // use first colour & sound
@@ -174,6 +184,7 @@ function runBeat() {
     beatAudioName = 'aClick02'
   }
 
+  // cache value for setTimeout
   let beatHolder = beat.meterInc
 
   // beat audio & flash
@@ -184,17 +195,14 @@ function runBeat() {
     gui.blink01.classList.remove(blinkFlashName)
   },100)
 
-  var time = 0
-  var elapsed = '0.0'
-
   // loop runBeat()
   if (beat.running) {
     beat.bpmTimeout = setTimeout(runBeat, bpm-adjFix)
     beat.meterTimeout = setTimeout(runMeter, bpm-beat.offset-adjFix)
   }
-  
   // count time
   beat.meterInc++
+  
 
 }
 
@@ -209,6 +217,7 @@ function changeBpm(bpm) {
   gui.bpmSlider.value = bpm
   // var holder for bpm number
   beat.bpmCalc = bpm
+  console.log(bpm)
 }
 
 //
@@ -261,6 +270,7 @@ Array.from(gui.rangeNos).forEach((noCl) => {
     let num = Number(this.innerHTML)
     // assign
     changeBpm(num)
+    beat.adjFlag = true
   })
 })
 
