@@ -37,8 +37,8 @@ var beat = {
   adjFlag: false
 }
 
-const touchEvent = 'ontouchstart' in window ? 'touchstart' : 'mousedown'
-
+// const touchEvent = 'ontouchstart' in window ? 'touchstart' : 'mousedown'
+const touchEvent = "click"
 // const tock = new Tock()
 
 // set at 60 for refreshes
@@ -57,9 +57,9 @@ document.addEventListener('keydown', function(e) {
 })
 
 // toggle for playing & pausing
-function playPause() {
+function playPause(override) {
   // stop
-  if (beat.running) {
+  if (beat.running || override === "stop") {
     clearInterval(beat.bpmTimeout)
     clearInterval(beat.meterTimeout)
     beat.running = false
@@ -279,7 +279,7 @@ Array.from(gui.rangeNos).forEach((noCl) => {
 //
 
 gui.tapBtn.addEventListener(touchEvent, function() {
-
+  playPause("stop")
   // don't add on first click. will be 0
   if (beat.firstTapFlag) {
     clearInterval(beat.tapTimeout)
