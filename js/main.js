@@ -33,8 +33,12 @@ var beat = {
   tapTimeoutInc: 0,
   tapTimeout: null,
   adjStart: undefined,
+  adjCount: 0,
   adjDiff: undefined,
-  adjFlag: false
+  adjFlag: false,
+  run: function() {
+
+  }
 }
 
 // const touchEvent = 'ontouchstart' in window ? 'touchstart' : 'mousedown'
@@ -59,16 +63,19 @@ document.addEventListener('keydown', function(e) {
 // toggle for playing & pausing
 function playPause(override) {
   // stop
+  console.log('playPause()')
   if (beat.running || override === "stop") {
-    clearInterval(beat.bpmTimeout)
-    clearInterval(beat.meterTimeout)
+    clearTimeout(beat.bpmTimeout)
+    clearTimeout(beat.meterTimeout)
     beat.running = false
     gui.icons.play.style.display = 'block'
     gui.icons.pause.style.display = 'none'
   // start
   } else {
     beat.running = true
-    startAnimating()  
+    startAnimating()
+    // runBeat()
+    // runMeter()  
     gui.icons.play.style.display = 'none'
     gui.icons.pause.style.display = 'block'
   }  
@@ -79,10 +86,16 @@ function playPause(override) {
 gui.bpmSlider.addEventListener('input', function() {
   // display value
   let val = this.value
-  changeBpm(val)
+  // changeBpm(val)
+  
+  gui.bpmPlayPause.innerHTML = val
+  // var holder for bpm number
+  beat.bpmCalc = val
+
   // gui.bpmPlayPause.innerHTML = val
   // beat.bpmCalc = val
   beat.adjFlag = true
+  // beat.adjCount = 1
 })
 
 // bpm slider
@@ -95,7 +108,7 @@ gui.bpmSlider.addEventListener('input', function() {
 
 // bpm start
 function startAnimating() {
-
+  console.log('startAnimating()')
   beat.adjStart = Date.now()
   
   beat.meterInc = 0
@@ -117,6 +130,10 @@ function startAnimating() {
   // get bpm & setInterval
   let bpm = 1000 / (beat.bpmCalc / 60)
 
+  clearTimeout(beat.meterTimeout)
+  clearTimeout(beat.bpmTimeout)
+  beat.bpmTimeout = undefined
+  beat.meterTimeout = undefined
   // start meter & beat Timeouts
   beat.meterTimeout = setTimeout(runMeter, bpm-beat.offset)
   beat.bpmTimeout = setTimeout(runBeat, bpm)
@@ -152,16 +169,25 @@ function runMeter() {
 
 function runBeat() {
 
-  // (note) this gets messed up when beat is changed via slider while running
-  // (note) maybe a flag to skip this part once after adjust?
-
+  console.log('runBeat()')
   // adjust compensate for inconsistent setTimeout timing
   let adjFix = 0
   let bpm = 1000 / (beat.bpmCalc / 60)
   beat.adjDiff = Date.now()
 
   // create adjustment value, or reset adjustment flag for next round
-  !beat.adjFlag ? adjFix = beat.adjDiff-beat.adjStart-bpm : beat.adjFlag = false
+  if (beat.adjFlag) {
+    beat.adjFlag = false
+    beat.adjCount++
+  }
+  // Normal, calculate correction 
+  else if (beat.adjCount === 0) {
+    adjFix = beat.adjDiff - beat.adjStart - bpm
+  }
+  else if (beat.adjCount === 1 ) {
+    beat.adjCount = 0
+  }
+  console.log(adjFix)
 
   // zero start date value for loop
   beat.adjStart = beat.adjDiff
@@ -172,14 +198,13 @@ function runBeat() {
   // greater than max, stop to 0
   // runMeter() has already scaled this to 0 above
   if (beat.meterInc === 0) {
-    beat.meterInc = 0
+    // beat.meterInc = 0
     // use first colour & sound
     blinkFlashName = 'flash-01'
     beatAudioName = 'aClick01'
   }
-  // after first beat
+  // after first beat, use regular colour & sound
   else {
-    // use regular colour & sound
     blinkFlashName = 'flash'
     beatAudioName = 'aClick02'
   }
@@ -195,14 +220,20 @@ function runBeat() {
     gui.blink01.classList.remove(blinkFlashName)
   },100)
 
+  // clearTimeout(beat.bpmTimeout)
+  // clearTimeout(beat.meterTimeout)
+  // beat.bpmTimeout = undefined
+  // beat.meterTimeout = undefined
+  // console.log(beat.bpmTimeout)
   // loop runBeat()
   if (beat.running) {
-    beat.bpmTimeout = setTimeout(runBeat, bpm-adjFix)
-    beat.meterTimeout = setTimeout(runMeter, bpm-beat.offset-adjFix)
+    (function(b,m,s,sa) {
+      beat.bpmTimeout = setTimeout(b, s)
+      beat.meterTimeout = setTimeout(m, sa)      
+    })(runBeat,runMeter,bpm-adjFix,bpm-beat.offset-adjFix)
   }
   // count time
   beat.meterInc++
-  
 
 }
 
@@ -213,11 +244,11 @@ function runBeat() {
 function changeBpm(bpm) {
   // play/pause btn display
   gui.bpmPlayPause.innerHTML = bpm
-  // range slider
-  gui.bpmSlider.value = bpm
   // var holder for bpm number
   beat.bpmCalc = bpm
   console.log(bpm)
+  // range slider
+  gui.bpmSlider.value = bpm
 }
 
 //
